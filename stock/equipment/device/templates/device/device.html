@@ -1,0 +1,13 @@
+{% extends 'device/base.html' %}
+
+{% block content %}
+
+
+{{eq1.serial_number}}
+{{eq1.model}}
+{{eq1.type}}
+{%for tag in tags%}
+{{tag}}
+{% endfor%}
+
+{% endblock %}
