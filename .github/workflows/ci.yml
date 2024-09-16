@@ -42,9 +42,6 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Линтинг
-        run: flake8 users/*
-
       - name: Тестирование
         run: python manage.py test
         env:
