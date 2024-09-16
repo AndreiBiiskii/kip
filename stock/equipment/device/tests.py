@@ -1,3 +1,6 @@
-from django.test import TestCase
+from unittest import TestCase
 
-# Create your tests here.
+
+class MyTest(TestCase):
+    def test_ok(self):
+        assert True

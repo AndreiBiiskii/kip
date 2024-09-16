@@ -1,9 +1,6 @@
-from django.conf import settings
-from django.conf.urls.static import static
-from django.urls import path, include
+from django.urls import path
 
 from device.views import LoginUser, logout_user, ChangePassword
-from .views import *
 
 urlpatterns = [
     path('login/', LoginUser.as_view(), name='login'),

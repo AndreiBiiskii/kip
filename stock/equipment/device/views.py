@@ -1,19 +1,14 @@
 import csv
 import datetime
-from pprint import pprint
-
 from dateutil.relativedelta import relativedelta
-from django.contrib.auth import logout, update_session_auth_hash, authenticate, login
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth import logout
 from django.contrib.auth.forms import PasswordChangeForm, AuthenticationForm
 from django.contrib.auth.views import LoginView, PasswordChangeView
 from django.db.models import Q
-from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import UpdateView, CreateView, ListView, DetailView, DeleteView, FormView
 from rest_framework.permissions import IsAdminUser
-
 from device.forms import AddEquipmentForm, AddDeviceForm, ChangFields, DraftForm, DraftFormDevice
 from device.models import Equipment, GP, Si, EquipmentType, EquipmentModel, Manufacturer, Status, Position, \
     EquipmentName, Location, Tag, StatusAdd, Description, Year, Draft
@@ -159,20 +154,28 @@ def search(request):
             serial_number = request.POST.get('serial_number')
             equipment = None
             si_or = False
-            if (serial_number != '') & (si is None) & (tag == '') & (not date_next):  # только по серийному номеру
+            if ((serial_number != '') &
+                    (si is None) & (tag == '') &
+                    (not date_next)):  # только по серийному номеру
                 si_or = False
-                equipment = Equipment.objects.filter(serial_number__icontains=serial_number)
+                equipment = Equipment.objects.filter(
+                    serial_number__icontains=serial_number)
             if (serial_number != '') & (si is not None):  # по серийному номеру и средству измерения
                 si_or = True
-                equipment = Equipment.objects.filter(Q(serial_number__icontains=serial_number) & Q(si_or=si_or))
-            if (tag != '') & (si is None) & (serial_number == '') & (not date_next):  # только по тегу
+                equipment = Equipment.objects.filter(Q(
+                    serial_number__icontains=serial_number) & Q(si_or=si_or))
+            if ((tag != '') & (si is None) &
+                    (serial_number == '') &
+                    (not date_next)):  # только по тегу
                 si_or = False
-                equipment = Equipment.objects.filter(tags__name__icontains=tag)
+                equipment = Equipment.objects.filter(
+                    tags__name__icontains=tag)
             if (si is not None) & (not date_next):  # только средства измерения
                 si_or = True
                 equipment = Equipment.objects.filter(si_or=True)
             if date_next:
-                equipment = Equipment.objects.filter(si__next_verification__lte=date_next)
+                equipment = Equipment.objects.filter(
+                    si__next_verification__lte=date_next)
                 si_or = True
             data = {
                 'si': si_or,
@@ -276,9 +279,10 @@ def DeviceUpdate(request, pk):
             d.save()
             s.save()
             si.previous_verification = request.POST['previous_verification']
-            si.next_verification = (datetime.datetime.strptime(request.POST['previous_verification'],
-                                                               '%Y-%m-%d').date()) + relativedelta(
-                months=+int(si.interval.name))
+            si.next_verification = (
+                                       datetime.datetime.strptime(request.POST['previous_verification'],
+                                                                  '%Y-%m-%d').date()) + relativedelta(
+                                                                    months=+int(si.interval.name))
             si.certificate = request.POST['certificate']
             si.save()
             return redirect('search')
@@ -330,11 +334,11 @@ class UpdateCategory(UpdateView):
 
 def delete_category(request, pk, Mod):
     obj = get_object_or_404(Mod, pk=pk)
-    try:
-        obj.delete()
-    except:
-        return render(request, 'device/index.html', context={'error': 'Ошибка удаления, есть связи с оборудованием'})
-    return redirect('index')
+    obj.delete()
+    return render(request,
+                  'device/index.html',
+                  context={'error': 'Ошибка удаления, '
+                                    'есть связи с оборудованием'})
 
 
 def index(request):
@@ -402,8 +406,11 @@ def draft_device_add(request, pk):
     else:
         form = AddDeviceForm()
     draft = Draft.objects.get(pk=pk)
-    return render(request, 'device/equipment_add.html', {'form': form, 'menu': menu,
-                                                         'draft': draft, 'title': 'Изменение черновика'})
+    return render(request,
+                  'device/equipment_add.html',
+                  {'form': form, 'menu': menu,
+                   'draft': draft,
+                   'title': 'Изменение черновика'})
 
 
 def draft_equipment_add(request, pk):
@@ -415,8 +422,11 @@ def draft_equipment_add(request, pk):
     else:
         form = AddEquipmentForm()
     draft = Draft.objects.get(pk=pk)
-    return render(request, 'device/equipment_add.html', {'form': form, 'menu': menu,
-                                                         'draft': draft, 'title': 'Изменение черновика'})
+    return render(request,
+                  'device/equipment_add.html',
+                  {'form': form, 'menu': menu,
+                   'draft': draft,
+                   'title': 'Изменение черновика'})
 
 
 def draft_delete(request, pk):
@@ -426,5 +436,3 @@ def draft_delete(request, pk):
         return redirect('index')
     else:
         return redirect('index')
-
-
