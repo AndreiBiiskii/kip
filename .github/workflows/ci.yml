@@ -36,14 +36,28 @@ jobs:
 
       - name: Set up Python 3.10
         uses: actions/setup-python@v3
-#        with:
-#          python-version: 3.8
+      #        with:
+      #          python-version: 3.8
 
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-#      - name: Тестирование
-#        run: python manage.py test
+      - name: Деплой
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          password: ${{ secrets.SERVER_KEY }}
+          script: |
+            cd /home/admin/kip/stock/equipment
+            git pull origin main
+            source env/bin/activate
+            pip install -r requirements.txt
+            python manage.py migrate
+            sudo systemctl restart gunicorn
+            
+        #      - name: Тестирование
+        #        run: python manage.py test
         env:
           SECRET_KEY: ${{env.SECRET_KEY}}
           DEBUG: ${{env.DEBUG}}
@@ -54,3 +68,5 @@ jobs:
           DB_PASSWORD: ${{env.DB_PASSWORD}}
           DB_HOST: ${{env.DB_HOST}}
           DB_PORT: ${{env.DB_PORT}}
+
+
