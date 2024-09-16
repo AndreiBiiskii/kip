@@ -10,15 +10,15 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     env:
-      SECRET_KEY:${{secrets.SECRET_KEY}}
-      DEBUG:${{secrets.DEBUG}}
-      ALLOWED_HOSTS:${{secrets.ALLOWED_HOSTS}}
-      DB_ENGINE:${{secrets.DB_ENGINE}}
-      DB_NAME:${{secrets.DB_NAME}}
-      DB_USER:${{secrets.DB_USER}}
-      DB_PASSWORD:${{secrets.DB_PASSWORD}}
-      DB_HOST:${{secrets.DB_HOST}}
-      DB_PORT:${{secrets.DB_PORT}}
+      SECRET_KEY: ${{secrets.SECRET_KEY}}
+      DEBUG: ${{secrets.DEBUG}}
+      ALLOWED_HOSTS: ${{secrets.ALLOWED_HOSTS}}
+      DB_ENGINE: ${{secrets.DB_ENGINE}}
+      DB_NAME: ${{secrets.DB_NAME}}
+      DB_USER: ${{secrets.DB_USER}}
+      DB_PASSWORD: ${{secrets.DB_PASSWORD}}
+      DB_HOST: ${{secrets.DB_HOST}}
+      DB_PORT: ${{secrets.DB_PORT}}
     services:
       postgres_main:
         image: postgres:13
@@ -48,12 +48,12 @@ jobs:
       - name: Тестирование
         run: python manage.py test
         env:
-          SECRET_KEY:${{env.SECRET_KEY}}
-          DEBUG:${{env.DEBUG}}
-          ALLOWED_HOSTS:${{env.ALLOWED_HOSTS}}
-          DB_ENGINE:${{env.DB_ENGINE}}
-          DB_NAME:${{env.DB_NAME}}
-          DB_USER:${{env.DB_USER}}
-          DB_PASSWORD:${{env.DB_PASSWORD}}
-          DB_HOST:${{env.DB_HOST}}
-          DB_PORT:${{env.DB_PORT}}
+          SECRET_KEY: ${{env.SECRET_KEY}}
+          DEBUG: ${{env.DEBUG}}
+          ALLOWED_HOSTS: ${{env.ALLOWED_HOSTS}}
+          DB_ENGINE: ${{env.DB_ENGINE}}
+          DB_NAME: ${{env.DB_NAME}}
+          DB_USER: ${{env.DB_USER}}
+          DB_PASSWORD: ${{env.DB_PASSWORD}}
+          DB_HOST: ${{env.DB_HOST}}
+          DB_PORT: ${{env.DB_PORT}}
