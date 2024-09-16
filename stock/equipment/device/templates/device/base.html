@@ -1,0 +1,42 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'device/css/style.css' %}">
+</head>
+<body>
+<div class="shadowbox">
+    {{user}}<br>
+    <hr>
+    <a class="a" href="{% url 'users:logout' %}">Выйти</a> |
+    <a href="{% url 'users:change_password'%}">Сменить пароль</a>
+</div>
+<br>
+{% if user.is_staff %}
+<div class="category-wrap">
+    <ul>
+        {% for i in menu %}
+        {% if i.title == "Поиск" %}
+        <hr>
+        {%endif%}
+        <li><a href="{% url i.url_name %}">{{i.title}}</a></li>
+        {% endfor %}
+        <hr>
+        <li><a href="{%url 'draft_list'%}">Черновик</a></li>
+        <hr>
+        <li><a href="{% url 'equipment_add' %}">Добавить оборудование</a></li>
+        <li><a href="{% url 'device_add' %}">Добавить прибор</a></li>
+    </ul>
+</div>
+
+{% endif %}
+{% block content %}
+
+
+{% endblock %}
+
+</body>
+</html>

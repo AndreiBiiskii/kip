@@ -1,0 +1,74 @@
+{% extends 'device/base.html' %}
+
+{% block content %}
+<hr>
+<div>
+    <form action="{% url 'search' %}" method="POST">
+        {% csrf_token %}
+        <input type="text" name="serial_number" placeholder="Серийный номер">
+        <button type="submit">Поиск</button>
+
+        <div {%if not user.is_staff%}class="owner" {%endif%}>
+            Фильтр:<br>
+            СИ:<input type="checkbox" name="si"><br>
+            Тэг<input type="text" name="tag"><br>
+            Дата следующей поверки:<input type="date" name="date_next">
+        </div>
+
+    </form>
+</div>
+<h1 class="error">{{error}}</h1>
+{%if error%}
+<a href="{% url 'draft' %}">Добавить информацию</a>
+{%endif%}
+<table>
+    <thead>
+    <tr>
+        <th>Серийный номер</th>
+        <th>Наименование</th>
+        <th>Модель</th>
+        <th>Поз. по ГП</th>
+        <th>Место установки</th>
+        <th>Тэг</th>
+        <th>Дата изменения</th>
+        <th>Описание</th>
+        {%if user.is_staff%}
+        <th>Кто внес изменения</th>
+        {%if si%}
+        <th>Дата предыдущей поверки</th>
+        <th>Дата следующей поверки</th>
+        {%endif%}
+        {%endif%}
+    </thead>
+    {%for equipment in equipments%}
+    <tr>
+        {%if user.is_staff%}
+        <td><a href="{{ equipment.get_absolute_url }}">{{equipment.serial_number}}</a></td>
+        {%endif%}
+        {%if not user.is_staff%}
+        {% if equipment.si_or %}
+        <td><a href="{% url 'device_update' equipment.pk %}" >{{equipment.serial_number}}</a></td>
+        {% else %}
+        <td><a href="{% url 'equipment_update' equipment.pk %}" >{{equipment.serial_number}}</a></td>
+        {%endif%}
+        {%endif%}
+        <td>{{equipment.name}}</td>
+        <td>{{equipment.model}}</td>
+        <td>{{equipment.positions.last.name}}</td>
+        <td>{{equipment.locations.last.name}}</td>
+        <td>{{equipment.tags.last.name}}</td>
+        <td>{{equipment.descriptions.last.at_date|date:"d-m-Y"}}</td>
+        <td>{{equipment.descriptions.last.name}}</td>
+        {%if user.is_staff%}
+        <td>{{equipment.descriptions.last.user}}</td>
+        {%if si%}
+        <td>{{equipment.si.last.previous_verification|date:"d-m-Y"}}</td>
+        <td>{{equipment.si.last.next_verification|date:"d-m-Y"}}</td>
+        {%endif%}
+        {%endif%}
+    </tr>
+    {%endfor%}
+</table>
+
+
+{% endblock %}

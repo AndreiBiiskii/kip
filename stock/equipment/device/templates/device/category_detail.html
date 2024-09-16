@@ -1,0 +1,12 @@
+{% extends 'device/base.html' %}
+
+{% block content%}
+
+
+{{ object.name }}
+
+<a href="{% url 'delete_category' object.slug %}">
+    <button type="button"> Delete</button>
+</a>
+
+{% endblock %}

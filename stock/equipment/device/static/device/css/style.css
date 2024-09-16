@@ -1,4 +1,240 @@
 
-h1 {
+.description {
+  width: 100%;
+  height: 50px;
+
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  background-color: #f8f8f8;
+  resize: none;
+}
+
+.error{
 color:red;
+}
+
+.update{
+width:8em;
+
+}
+.text{
+width:90%
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+
+}
+tr, td, th {
+  border: 1.5px solid black;
+  padding: 4px;
+  text-align: left;
+}
+.detail{
+height:30px
+}
+
+.si{
+width:25px;
+border-collapse: collapse;
+border: 1.5px solid purple;
+}
+
+.eq {
+  outline: none;
+  text-decoration: none;
+  display: inline-block;
+  padding: 0.5em 0.5em;
+  border-radius: 100px;
+  margin-right: 0.625%;
+  text-align: center;
+  line-height: 1;
+  color: black;
+}
+
+.eq:link,
+.eq:visited,
+eq:focus {
+  background: #0095B6;
+}
+
+eq:hover {
+  background: orange;
+}
+
+eq:active {
+  background: red;
+  color: white;
+}
+.td_position, th{
+border-collapse: collapse;
+border: 3px solid purple;
+}
+
+.category-wrap {
+  padding: 15px;
+  background: white;
+  width: 10em;
+  box-shadow: 2px 2px 8px rgba(0,0,0,.1);
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  border-radius: 10px;
+}
+.category-wrap h3 {
+  font-size: 16px;
+  color: rgba(0,0,0,.6);
+  margin: 0 0 10px;
+  padding: 0 5px;
+  position: relative;
+}
+.category-wrap h3:after {
+  content: "";
+  width: 6px;
+  height: 6px;
+  background: #80C8A0;
+  position: absolute;
+  right: 5px;
+  bottom: 2px;
+  box-shadow: -8px -8px #80C8A0, 0 -8px #80C8A0, -8px 0 #80C8A0;
+}
+.category-wrap ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid rgba(0,0,0,.3);
+}
+.category-wrap li {margin: 12px 0 0 0px;}
+.category-wrap a {
+  text-decoration: none;
+  display: block;
+  font-size: 13px;
+  color: rgba(0,0,0,.6);
+  position: relative;
+  transition: .3s linear;
+}
+.category-wrap a:after {
+  content:"\f18e";
+  font-family: FontAwesome;
+  position: absolute;
+  right: 5px;
+  color: white;
+  transition: .2s linear;
+}
+.category-wrap a:hover {
+  background: #80C8A0;
+  color: white;
+}
+
+.button-style {
+  display: inline-block;
+  padding: 10px 15px;
+  margin-left:10px;
+  width:88px;
+  background: #f2f2f2;
+  border: 1px solid #000;
+  color: #333;
+  text-decoration: none;
+  text-align: center;
+  box-shadow: -2px -2px 20px 20px #80C8A0, 0 -2px #80C8A0, -2px 0 #80C8A0;
+  color:#80C80A;
+}
+
+.button-style:hover, .button-style:focus {
+  background: #e2e2f2;
+
+}
+
+.button-style2 {
+  display: inline-block;
+  padding: 5px 5px;
+  margin-left:10px;
+  margin-top:10px;
+  width:88px;
+  background: #f2f2f2;
+  border: 1px solid #1E90FF;
+  color: ##00BFFF;
+  text-decoration: none;
+  text-align: center;
+  box-shadow: -2px -2px 2px 2px #00BFFF, 0 -2px #00BFFF, -2px 0 #00BFFF;
+  color:#00BFFF;
+}
+
+.button-style2:hover, .button-style:focus {
+  background: #e2e2f2;
+
+}
+
+.button-style3 {
+  display: inline-block;
+  padding: 5px 5px;
+  margin-left:10px;
+  margin-top:10px;
+  width:88px;
+  background: #f2f2f2;
+  border: 1px solid #A52A2A;
+  color: #800000;
+  text-decoration: none;
+  text-align: center;
+  box-shadow: -2px -2px 2px 2px #800000, 0 -2px #800000, -2px 0 #800000;
+  color:#800000;
+}
+
+.button-style3:hover, .button-style:focus {
+  background: #e2e2f2;
+
+}
+.user
+{
+  padding-left: 15px;
+  padding-right: 15px;
+  background: white;
+  width: 100px;
+  box-shadow: 2px 2px 8px rgba(0,0,0,.1);
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+}
+.owner
+{
+display: none;
+}
+
+a {
+  text-decoration: none;
+  font-size: 15px;
+  color: rgba(0,0,0,.6);
+  position: relative;
+  transition: .3s linear;
+}
+.shadowbox {
+  width: 10.2em;
+  border: 1px solid #333;
+  box-shadow: 8px 8px 5px #444;
+  padding: 8px 12px;
+  background-image: linear-gradient(180deg, #fff, #ddd 40%, #ccc);
+  border-radius: 10px;
+}
+
+.footer	{
+	width: 100%;
+	height: 100px; // не ограничивайте высоту основных блоков, лучше пишите min-height
+	background: #696969;
+	bottom: 0; // координата не работает без свойства position
+}
+.strip	{
+	width: 1000px;
+	margin: 10px 0 0 auto;
+	background: #FFFFFF;
+	z-index: 1; // работает также только для явно спозиционированных блоков
+}
+
+.image {
+            margin:10px;
+            margin-top:0px;
+        }
+.sidebar{
+    border: 2px solid #ccc;
+    background-color: #eee;
+    width: 400px;
+    padding: 10px;
+    margin-left:10px;
+    font-size: 20px;
 }

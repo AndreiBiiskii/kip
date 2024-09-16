@@ -1,0 +1,7 @@
+{% extends 'device/base.html' %}
+
+{% block content %}
+{%if not user.is_authenticated%}
+<a href="{%url 'login'%}">Login</a>
+{%endif%}
+{% endblock %}

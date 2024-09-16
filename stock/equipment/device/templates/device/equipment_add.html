@@ -1,0 +1,42 @@
+{% extends 'device/base.html' %}
+
+{% block content%}
+{{ eq.model }}
+{{eq.id}}
+
+    <div class="footer">
+    <form action="" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit"> save</button>
+    </form>
+        {% if draft %}
+        </div>
+    <div class="strip">
+        <ul>
+            <li>
+                Позиция:{{draft.poz_draft}}
+            </li>
+            <li>
+                Место установки:{{draft.location_draft}}
+            </li>
+            <li>
+                Тэг:{{draft.tag_draft}}
+            </li>
+            <li>
+                Описание:{{draft.description_draft}}
+            </li>
+            <li>
+                Статус:{{draft.status_draft}}
+            </li>
+            <li>
+                User:{{draft.user_draft}}
+            </li>
+            <li>
+                <a href="{% url 'draft_delete' draft.pk %}">Удалить</a>
+            </li>
+        </ul>
+        <img src="{{draft.images.url}}">
+    </div>
+{%endif%}
+{% endblock %}

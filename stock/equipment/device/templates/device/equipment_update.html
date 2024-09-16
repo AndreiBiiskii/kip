@@ -1,0 +1,76 @@
+{% extends 'device/base.html' %}
+
+{% block content %}
+
+<form action="" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <b>Серийный номер: </b><cite>{{equipment.serial_number}}</cite> <br />
+    <b>Наименование:</b><cite>{{equipment.name}}</cite><br />
+    <b>Модель: </b><cite>{{equipment.model}}</cite> <br />
+
+    <h3 class="error">{{error}}</h3>
+    <table class="update">
+        <tr>
+            <td>
+                <b><cite>Позиция по ГП:</cite></b>
+                <select name="position" class="text">
+                    {%for position in positions%}
+                    <option>{{position}}</option>
+                    {%endfor%}
+                    <option selected>{{equipment.positions.last.name}}</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <cite><b>Место</b></cite><br>
+                <cite><b>установки:</b></cite>
+                <input class="text" type="text" size="10px" name="location" value="{{equipment.locations.last.name}}">
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <cite><b>Тэг:</b></cite>
+                <input type="text" class="text" name="tag" value="{{equipment.tags.last.name}}">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <cite><b>Статус:</b></cite>
+                <select name="status" class="text">
+                    {%for stat in status%}
+                    <option>{{stat}}</option>
+                    {%endfor%}
+                    <option selected>{{equipment.status.last.name}}</option>
+                </select>
+            </td>
+        </tr>
+    </table>
+    <br>
+    <b>Комментарий</b>
+    <textarea class="description" name="description">{{equipment.descriptions.last.name}}</textarea>
+    {%if si_or%}
+    <table {%if user.is_staff%}class="si"{%else%} class="owner"{%endif%}>
+        <tr>
+            <td>
+                <b>Дата предыдущей поверки:</b>
+                <input type="date" name="previous_verification" value='{{equipment.si.last.previous_verification|date:"Y-m-d"}}'>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <b>Сертификат:</b>
+                <input type="text" name="certificate" value="{{equipment.si.last.certificate}}">
+            </td>
+        </tr>
+    </table>
+    {%endif%}
+    <button type="submit" class="button-style2"> Обновить данные</button>
+    <a href="{% url 'search' %}" class="button-style2">К поиску</a>
+
+</form>
+
+
+{% endblock %}
+

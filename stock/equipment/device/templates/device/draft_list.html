@@ -1,0 +1,8 @@
+{% extends 'device/base.html' %}
+
+{% block content%}
+
+{% for draft in drafts%}
+<a href="{{draft.get_absolute_url}}">{{draft.user_draft}}</a>
+{%endfor%}
+{% endblock %}

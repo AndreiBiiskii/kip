@@ -1,0 +1,20 @@
+{% extends 'device/base.html' %}
+{% load static %}
+{% block content%}
+<div class="sidebar">
+    <ul>
+        <li>
+            <a href="{% url 'draft_equipment_add' object.pk %}">Добавить данные оборудования черновика</a>
+        </li>
+        <li>
+            <a href="{% url 'draft_device_add' object.pk %}">Добавить данные прибора черновика</a>
+        </li>
+        <li>
+            <a href="{% url 'draft_delete' object.pk %}">Удалить</a>
+        </li>
+    </ul>
+</div>
+<img class="image" src="{{object.images.url}}">
+
+{% endblock %}
+
