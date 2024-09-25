@@ -7,9 +7,9 @@
     <cite>
 
         <h2>{{ equipment.serial_number }} / {{ equipment.name }} / {{ equipment.type }} / {{ equipment.model}}</h2>
-
     </cite>
 </div>
+<br><br>
 <table>
     <thead class="td_position">
     <tr>
@@ -43,7 +43,7 @@
         <td>{{i.user}}</td>
         <td>{{i.at_date|date:"d-m-Y"}}</td>
         {%if equipment.si_or%}
-        <td>{{equipment.si.last.scale.min_scale|floatformat}}..{{equipment.si.last.scale.max_scale|floatformat}}</td>
+        <td>{{equipment.si.last.scale.min_scale}}..{{equipment.si.last.scale.max_scale}}</td>
         <td>{{equipment.si.last.unit}}</td>
         <td>{{equipment.si.last.interval}}</td>
         <td>{{equipment.si.last.previous_verification|date:"d-m-Y"}}</td>

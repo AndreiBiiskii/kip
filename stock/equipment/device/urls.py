@@ -1,11 +1,12 @@
 from django.conf import settings
 from django.conf.urls.static import static
-from django.urls import path
+from django.urls import path, include
 
 from .views import *
 
 urlpatterns = [
     path('', search, name='search'),
+    path('users/', include(('users.urls', 'users'), namespace='users')),
     path('index', index, name='index'),
     path('draft', DraftCreate.as_view(), name='draft'),
     path('draft_list/', DraftList.as_view(), name='draft_list'),
@@ -19,9 +20,13 @@ urlpatterns = [
     path('equipment_delete/<int:pk>', EquipmentDelete, name='equipment_delete'),
     path('device_add/', device_add, name='device_add'),
     path('device_update/<int:pk>', DeviceUpdate, name='device_update'),
-    path('equipments/search/', search, name='search'),
+    path('equipments/search/', equipment_list, name='search'),
+    path('fainder/', equipment_list),
     # path('im/', IM, name='im'),
-    path('devices/', device, name='devices'),
+    path('si_loading/', si_loading, name='si_loading'),
+    path('gp_loading', gp_loading, name='gp_loading'),
+
+
     # path('change_password/', change_password, name='change_password'),
     path('manufacturers/', ListCategory.as_view(model=Manufacturer, extra_context={
         'title': 'Список производителей',

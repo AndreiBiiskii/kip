@@ -11,8 +11,12 @@
 <div class="shadowbox">
     {{user}}<br>
     <hr>
+    {%if user.is_authenticated%}
     <a class="a" href="{% url 'users:logout' %}">Выйти</a> |
     <a href="{% url 'users:change_password'%}">Сменить пароль</a>
+    {%else%}
+    <a class="a" href="{% url 'users:login' %}">Войти</a>
+    {%endif%}
 </div>
 <br>
 {% if user.is_staff %}

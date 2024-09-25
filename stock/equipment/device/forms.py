@@ -129,8 +129,8 @@ class AddDeviceForm(forms.Form):
     status = forms.ModelChoiceField(label='Статус:', queryset=StatusAdd.objects.all(), required=False)
     status_new = forms.CharField(label='Добавить статус', max_length=10, required=False)
     year = forms.ModelChoiceField(label='Год выпуска:', queryset=Year.objects.all(), required=False)
-    error = forms.ModelChoiceField(label='Погрешность:', queryset=Error.objects.all(), required=False)
-    error_new = forms.CharField(label='Добавить погрешность:', required=False)
+    # error = forms.ModelChoiceField(label='Погрешность:', queryset=Error.objects.all(), required=False)
+    # error_new = forms.CharField(label='Добавить погрешность:', required=False)
     reg_number = forms.ModelChoiceField(label='Регистрационный номер:', queryset=RegNumber.objects.all(),
                                         required=False)
     reg_number_new = forms.CharField(label='Добавить регистрационный номер:', max_length=20, required=False)
@@ -167,8 +167,8 @@ class AddDeviceForm(forms.Form):
             raise forms.ValidationError(message='Год выпуска не может быть больше текущего')
         if (self.cleaned_data['status'] is None) & (self.cleaned_data['status_new'] == ''):
             raise forms.ValidationError(message='Не указан статус.')
-        if (self.cleaned_data['error'] is None) & (self.cleaned_data['error_new'] == ''):
-            raise forms.ValidationError(message='Не указана погрешность.')
+        # if (self.cleaned_data['error'] is None) & (self.cleaned_data['error_new'] == ''):
+        #     raise forms.ValidationError(message='Не указана погрешность.')
         if (self.cleaned_data['name'] is None) & (self.cleaned_data['name_new'] == ''):
             raise forms.ValidationError(message='Не указано наименование.')
         if (self.cleaned_data['type'] is None) & (self.cleaned_data['type_new'] == ''):
@@ -200,8 +200,8 @@ class AddDeviceForm(forms.Form):
             self.cleaned_data['model'] = self.cleaned_data['model_new']
         if self.cleaned_data['status_new']:
             self.cleaned_data['status'] = self.cleaned_data['status_new']
-        if self.cleaned_data['error_new']:
-            self.cleaned_data['error'] = self.cleaned_data['error_new']
+        # if self.cleaned_data['error_new']:
+        #     self.cleaned_data['error'] = self.cleaned_data['error_new']
         if self.cleaned_data['reg_number_new']:
             self.cleaned_data['reg_number'] = self.cleaned_data['reg_number_new']
         EquipmentType.objects.get_or_create(name=self.cleaned_data['type'])
@@ -226,7 +226,7 @@ class AddDeviceForm(forms.Form):
         Description.objects.create(equipment=equipment, user=user, name=description)
         VerificationInterval.objects.get_or_create(name=self.cleaned_data['interval'])
         Scale.objects.get_or_create(min_scale=min_scale, max_scale=max_scale)
-        Error.objects.get_or_create(name=self.cleaned_data['error'])
+        # Error.objects.get_or_create(name=self.cleaned_data['error'])
         RegNumber.objects.get_or_create(name=self.cleaned_data['reg_number'])
         Unit.objects.get_or_create(name=self.cleaned_data['unit'])
         Si.objects.create(equipment=equipment,
@@ -237,7 +237,7 @@ class AddDeviceForm(forms.Form):
                           interval=VerificationInterval.objects.get(name=self.cleaned_data['interval']),
                           scale=Scale.objects.get(min_scale=min_scale, max_scale=max_scale),
                           unit=Unit.objects.get(name=self.cleaned_data['unit']),
-                          error_device=Error.objects.get(name=self.cleaned_data['error']),
+                          # error_device=Error.objects.get(name=self.cleaned_data['error']),
                           reg_number=RegNumber.objects.get(name=self.cleaned_data['reg_number']))
         return self.cleaned_data
 
@@ -254,3 +254,7 @@ class DraftForm(forms.ModelForm):
 
 class DraftFormDevice(forms.Form):
     description = forms.CharField(widget=forms.Textarea(attrs={'rows': '4', 'cols': '80'}))
+
+
+class FormFilter(forms.Form):
+    search = forms.ModelChoiceField(queryset=EquipmentType.objects.all())

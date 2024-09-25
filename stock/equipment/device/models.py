@@ -43,7 +43,7 @@ class VerificationInterval(models.Model):
 
 
 class Manufacturer(models.Model):
-    name = models.CharField(max_length=100, verbose_name='Производитель оборудования', unique=True)
+    name = models.CharField(max_length=255, verbose_name='Производитель оборудования', unique=True)
 
     def __str__(self):
         return self.name
@@ -53,7 +53,7 @@ class Manufacturer(models.Model):
 
 
 class EquipmentType(models.Model):
-    name = models.CharField(max_length=100, verbose_name='Тип оборудования', unique=True)
+    name = models.CharField(max_length=255, verbose_name='Тип оборудования', unique=True)
 
     def __str__(self):
         return self.name
@@ -63,7 +63,7 @@ class EquipmentType(models.Model):
 
 
 class EquipmentModel(models.Model):
-    name = models.CharField(max_length=100, verbose_name='Модель оборудования', unique=True)
+    name = models.CharField(max_length=255, verbose_name='Модель оборудования', unique=True)
 
     def __str__(self):
         return self.name
@@ -73,22 +73,22 @@ class EquipmentModel(models.Model):
 
 
 class EquipmentName(models.Model):
-    name = models.CharField(max_length=100, verbose_name='Наименование оборудования', unique=True)
+    name = models.CharField(max_length=255, verbose_name='Наименование оборудования', unique=True)
 
     def __str__(self):
         return self.name
 
     class Meta:
+        ordering = ('name',)
         verbose_name_plural = 'Наименование оборудования'
 
 
 class Position(models.Model):
-    name = models.CharField(max_length=100, verbose_name='Позиция по ГП')
-    equipment = models.ForeignKey('Equipment', on_delete=models.DO_NOTHING, related_name='positions',
-                                  verbose_name='Позиция по ГП')
+    name = models.CharField(verbose_name='Позиция по ГП', blank=True, null=True)
+    equipment = models.ForeignKey('Equipment', on_delete=models.DO_NOTHING, related_name='positions')
 
     def __str__(self):
-        return self.equipment
+        return self.name
 
     class Meta:
         verbose_name_plural = 'Позиции'
@@ -96,7 +96,7 @@ class Position(models.Model):
 
 
 class Description(models.Model):
-    name = models.CharField(max_length=100, verbose_name='Описание')
+    name = models.CharField(max_length=100, verbose_name='Описание', blank=False, null=False)
     equipment = models.ForeignKey('Equipment', on_delete=models.DO_NOTHING, verbose_name='Описание оборудования',
                                   related_name='descriptions')
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name='descriptions',
@@ -111,7 +111,7 @@ class Description(models.Model):
 
 
 class Location(models.Model):
-    name = models.CharField(max_length=100, verbose_name='Место нахождения.')
+    name = models.CharField(max_length=255, verbose_name='Место нахождения.', blank=True, null=True)
     equipment = models.ForeignKey('Equipment', on_delete=models.DO_NOTHING, related_name='locations',
                                   verbose_name='Место установки', default='NoneLocation')
 
@@ -123,12 +123,12 @@ class Location(models.Model):
 
 
 class Tag(models.Model):
-    name = models.CharField(max_length=100, verbose_name='Тэг')
+    name = models.CharField(max_length=100, verbose_name='Тэг', blank=True, null=True)
     equipment = models.ForeignKey('Equipment', on_delete=models.CASCADE, related_name='tags', verbose_name='Тэг',
                                   default='NoneTag')
 
     def __str__(self):
-        return self.equipment
+        return self.name
 
     class Meta:
         verbose_name_plural = 'Тэг'
@@ -171,11 +171,11 @@ class Si(models.Model):
                                  null=True, verbose_name='Межповерочный интервал (мес)')
     scale = models.ForeignKey('Scale', on_delete=models.CASCADE, related_name='scale', verbose_name='Шкала датчика')
     unit = models.ForeignKey('Unit', on_delete=models.CASCADE, related_name='unit', verbose_name='Единица измерения')
-    # year = models.ForeignKey('Year', on_delete=models.DO_NOTHING, related_name='year', verbose_name='Год выпуска')
-    error_device = models.ForeignKey('Error', on_delete=models.DO_NOTHING, related_name='error_device',
-                                     verbose_name='Погрешность', default=1)
+    # error_device = models.ForeignKey('Error', on_delete=models.DO_NOTHING, related_name='error_device',
+    #                                  verbose_name='Погрешность', default=1)
     reg_number = models.ForeignKey('RegNumber', on_delete=models.DO_NOTHING, related_name='reg_number',
                                    verbose_name='Регистрационный номер')
+    result = models.BooleanField(default=True)
 
     # def __str__(self):
     #     return self.equipment.name
@@ -211,6 +211,9 @@ class GP(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        ordering = ['name',]
+
 
 class RegNumber(models.Model):
     name = models.CharField(max_length=10, verbose_name='Регистрационный номер')
@@ -219,11 +222,11 @@ class RegNumber(models.Model):
         return self.name
 
 
-class Error(models.Model):
-    name = models.CharField(max_length=10, verbose_name='Погрешность')
-
-    def __str__(self):
-        return self.name
+# class Error(models.Model):
+#     name = models.CharField(max_length=10, verbose_name='Погрешность')
+#
+#     def __str__(self):
+#         return self.name
 
 
 class Year(models.Model):
@@ -235,12 +238,12 @@ class Year(models.Model):
 
 
 class Scale(models.Model):
-    min_scale = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Минимум шкалы')
-    max_scale = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Максимум шкалы')
+    min_scale = models.CharField(max_length=10, verbose_name='Минимум шкалы')
+    max_scale = models.CharField(max_length=10, verbose_name='Максимум шкалы')
 
 
 class Unit(models.Model):
-    name = models.CharField(max_length=5, verbose_name='Единицы измерения')
+    name = models.CharField(max_length=10, verbose_name='Единицы измерения')
 
     def __str__(self):
         return self.name

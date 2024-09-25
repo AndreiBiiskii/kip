@@ -1,17 +1,24 @@
 import csv
 import datetime
+import os
+
+import django_filters
 from dateutil.relativedelta import relativedelta
+from django import forms
+from django.conf import settings
 from django.contrib.auth import logout
 from django.contrib.auth.forms import PasswordChangeForm, AuthenticationForm
+from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView, PasswordChangeView
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import UpdateView, CreateView, ListView, DetailView, DeleteView, FormView
+from django_filters import filters
 from rest_framework.permissions import IsAdminUser
-from device.forms import AddEquipmentForm, AddDeviceForm, ChangFields, DraftForm, DraftFormDevice
+from device.forms import AddEquipmentForm, AddDeviceForm, ChangFields, DraftForm, DraftFormDevice, FormFilter
 from device.models import Equipment, GP, Si, EquipmentType, EquipmentModel, Manufacturer, Status, Position, \
-    EquipmentName, Location, Tag, StatusAdd, Description, Year, Draft
+    EquipmentName, Location, Tag, StatusAdd, Description, Year, Draft, VerificationInterval, Unit, RegNumber, Scale
 from users.forms import LoginUserForm
 
 menu = [
@@ -25,28 +32,132 @@ menu = [
 ]
 
 
-def device(request):
-    # with open('./new.csv', encoding='utf-8') as file2:
-    #     with open('./new2.csv', 'w', encoding='utf-8') as file3:
-    #         reader2 = csv.DictReader(file2, delimiter='|')
-    #         headers = reader2.fieldnames
-    #         writer = csv.DictWriter(file3, fieldnames=headers, delimiter='|')
-    #         count1 = 0
-    #         count2 = 0
-    #         for item in reader2:
-    #             with open('./si.csv', encoding='utf-8') as file1:
-    #                 reader1 = csv.DictReader(file1, delimiter=';')
-    #                 count1 += 1
-    #                 for row in reader1:
-    #                     count2 += 1
-    #                     if item['serial_number'] in row['serial_number']:
-    #                         item['certificate'] = row['certificate']
-    #                         writer.writerow(item)
-    #         print(count1, count2)
-    with open('./GP.csv', encoding='utf-8') as file:
-        reader = csv.DictReader(file, delimiter=',')
+# position;location;teg;model;type ;name;reg_number;serial_number;year;min_scale;max_scale;unit;mpi;previous_verification;result;certificate
+def si_loading(request):
+    u = User.objects.get(username='admin')
+    with open(os.path.join(settings.BASE_DIR, 'SIkgs.csv'), encoding='utf-8') as si:
+        reader = csv.DictReader(si, delimiter=';')
+        for i, row in enumerate(reader):
+            if row['mpi'] == '':
+                row['mpi'] = '0'
+            if row['previous_verification'] == '':
+                d = '{}-{}-{}'.format(1990, 1, 1)
+            else:
+                rez = row['previous_verification'].split('.')
+                year = rez[2]
+                month = rez[1]
+                day = rez[0]
+                d = '{}-{}-{}'.format(year, month, day)
+            try:
+                previous_verification = datetime.date.fromisoformat(d)
+            except:
+                previous_verification = datetime.datetime.fromisoformat('1990-01-01')
+
+            next_verification = previous_verification + relativedelta(
+                months=+(int(row['mpi'])))
+            try:
+                m = EquipmentModel.objects.get(name=row['model'])
+
+            except:
+                EquipmentModel.objects.create(name=row['model'])
+            m = EquipmentModel.objects.get(name=row['model'])
+
+            try:
+                t = EquipmentType.objects.get(name=row['type'])
+            except:
+                EquipmentType.objects.create(name=row['type'])
+            t = EquipmentType.objects.get(name=row['type'])
+
+            try:
+                n = EquipmentName.objects.get(name=row['name'])
+            except:
+                EquipmentName.objects.create(name=row['name'])
+            n = EquipmentName.objects.get(name=row['name'])
+
+            try:
+                y = Year.objects.get(name=row['year'])
+            except:
+                Year.objects.create(name=row['year'])
+            y = Year.objects.get(name=row['year'])
+
+            try:
+                man = Manufacturer.objects.get(name='manufacturer')
+            except:
+                Manufacturer.objects.create(name='manufacturer')
+            man = Manufacturer.objects.get(name='manufacturer')
+            try:
+                eq = Equipment.objects.create(
+                    serial_number=row['serial_number'],
+                    model=m,
+                    si_or=True,
+                    manufacturer=man,
+                    type=t,
+                    name=n,
+                    year=y,
+                )
+            except:
+                continue
+
+            Position.objects.create(name=row['position'], equipment=eq)
+            Location.objects.create(name=row['location'], equipment=eq)
+            Tag.objects.create(name=row['teg'], equipment=eq)
+            Description.objects.create(name='description', equipment=eq, user=u)
+
+            try:
+                status = StatusAdd.objects.get(name='Установлен')
+            except:
+                StatusAdd.objects.create(name='Установлен')
+            status = StatusAdd.objects.get(name='Установлен')
+
+            Status.objects.create(name=status, equipment=eq)
+
+            try:
+                VerificationInterval.objects.get(name=row['mpi'])
+            except:
+                VerificationInterval.objects.create(name=row['mpi'])
+            interval = VerificationInterval.objects.get(name=row['mpi'])
+
+            try:
+                Scale.objects.get(min_scale=row['min_scale'], max_scale=row['max_scale'])
+            except:
+                Scale.objects.create(min_scale=row['min_scale'], max_scale=row['max_scale'])
+            scale = Scale.objects.get(min_scale=row['min_scale'], max_scale=row['max_scale'])
+
+            try:
+                Unit.objects.get(name=row['unit'])
+            except:
+                Unit.objects.create(name=row['unit'])
+            unit = Unit.objects.get(name=row['unit'])
+
+            try:
+                RegNumber.objects.get(name=row['reg_number'])
+            except:
+                RegNumber.objects.create(name=row['reg_number'])
+            reg_number = RegNumber.objects.get(name=row['reg_number'])
+
+            Si.objects.create(
+                equipment=eq,
+                previous_verification=previous_verification,
+                next_verification=next_verification,
+                certificate=row['certificate'],
+                interval=interval,
+                scale=scale,
+                unit=unit,
+                reg_number=reg_number,
+                result=True
+            )
+        return render(request, 'device/index.html')
+
+
+def gp_loading(request):
+    with open(os.path.join(settings.BASE_DIR, 'SIkgs.csv'), encoding='utf-8') as gp:
+        reader = csv.DictReader(gp, delimiter=';')
         for row in reader:
-            GP.objects.create(name=row['number'], construction=row['construction'])
+            GP.objects.get_or_create(name=row['position'])
+    with open(os.path.join(settings.BASE_DIR, 'SI.csv'), encoding='utf-8') as gp:
+        reader = csv.DictReader(gp, delimiter=';')
+        for row in reader:
+            GP.objects.get_or_create(name=row['position'])
 
     return render(request, 'device/index.html')
 
@@ -94,7 +205,6 @@ def IM(request):
 #             'objects': Equipment.objects.all()
 #     }
 #     return render(request, 'device/equipments.html', context=data)
-
 
 def equipment_add(request):
     if request.method == 'POST':
@@ -175,13 +285,21 @@ def search(request):
                 equipment = Equipment.objects.filter(si_or=True)
             if date_next:
                 equipment = Equipment.objects.filter(
-                    si__next_verification__lte=date_next)
+                    si__next_verification__lte=date_next).order_by('-si__next_verification')
                 si_or = True
+            if request.method == 'POST':
+
+                form = FormFilter(request.POST)
+
+            else:
+                form = FormFilter()
+
             data = {
                 'si': si_or,
                 'equipments': equipment,
                 'title': 'Результаты поиска',
                 'menu': menu,
+                'formfilter': form,
             }
             if not equipment:
                 data['error'] = 'Оборудование не найдено'
@@ -189,7 +307,66 @@ def search(request):
         else:
             return render(request, 'device/equipments.html', {'menu': menu})
     else:
-        return redirect('login')
+        return redirect('index')
+
+
+class MyFilter(django_filters.FilterSet):
+    type = django_filters.CharFilter(field_name='type__name', lookup_expr='contains', label='Тип:')
+    position = django_filters.ModelChoiceFilter(queryset=GP.objects.all(), field_name='positions__name',
+                                                lookup_expr='exact', label='Позиция:')
+    name = django_filters.CharFilter(field_name='name__name', lookup_expr='contains', label='Название:')
+    model = django_filters.CharFilter(field_name='model__name', lookup_expr='contains', label='Модель:')
+    year__lt = django_filters.DateFilter(
+        widget=forms.TextInput(attrs=
+        {
+            'type': 'date',
+            # 'value': datetime.date.today().strftime('%Y-%m-%d'),
+        }), label='Дата следующей поверки:'
+
+        , field_name='si__next_verification', lookup_expr='lt'
+    )
+    status = django_filters.ModelChoiceFilter(queryset=StatusAdd.objects.all(), field_name='status__name',
+                                              lookup_expr='exact', label='Статус')
+
+    # year__gt = django_filters.DateFilter(
+    #     widget=forms.TextInput(attrs=
+    #     {
+    #         'type': 'date',
+    #         # 'value': datetime.date.today().strftime('%Y-%m-%d'),
+    #     }), label='Дата следующей поверки:'
+    #
+    #     , field_name='si__next_verification', lookup_expr='gt'
+    # )
+
+    class Meta:
+        model = Equipment
+        fields = ['year', ]
+
+
+def equipment_list(request):
+    if request.method == 'POST':
+        eq_filter = MyFilter(request.POST,
+                             queryset=Equipment.objects.prefetch_related('si', 'status').all().order_by(
+                                 '-si__next_verification'))
+        data = {
+            'title': 'Поиск',
+            'menu': menu,
+            'si': True,
+            'equipments': eq_filter,
+            'count': eq_filter.qs.count(),
+        }
+        return render(request, 'device/equipments.html', context=data)
+
+    else:
+        eq_filter = MyFilter(request.POST, queryset=Equipment.objects.all()[0:0])
+        data = {
+            'title': 'Поиск',
+            'menu': menu,
+            'si': True,
+            'equipments': eq_filter,
+        }
+
+        return render(request, 'device/equipments.html', context=data)
 
 
 def equipment_detail(request, pk):
@@ -282,7 +459,7 @@ def DeviceUpdate(request, pk):
             si.next_verification = (
                                        datetime.datetime.strptime(request.POST['previous_verification'],
                                                                   '%Y-%m-%d').date()) + relativedelta(
-                                                                    months=+int(si.interval.name))
+                months=+int(si.interval.name))
             si.certificate = request.POST['certificate']
             si.save()
             return redirect('search')

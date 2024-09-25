@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'device.apps.DeviceConfig',
     'users.apps.UsersConfig',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
