@@ -1,6 +1,7 @@
 import datetime
 import re
 
+from django.forms import Textarea
 from django.http import request
 
 from device.variables import *
@@ -25,22 +26,37 @@ class ChangFields(forms.ModelForm):
 
 
 class AddEquipmentForm(forms.Form):
-    serial_number = forms.CharField(label='Серийный номер', max_length=100)
-    model = forms.ModelChoiceField(label='Модель:', queryset=EquipmentModel.objects.all(), required=False)
-    model_new = forms.CharField(label='Добавить модель:', required=False)
-    type = forms.ModelChoiceField(label='Тип оборудования:', queryset=EquipmentType.objects.all(), required=False)
-    type_new = forms.CharField(label='Добавить тип:', max_length=15, required=False)
-    manufacturer = forms.ModelChoiceField(label='Производитель:', queryset=Manufacturer.objects.all(), required=False)
-    manufacturer_new = forms.CharField(label='Добавить производителя:', required=False)
-    name = forms.ModelChoiceField(queryset=EquipmentName.objects.all(), required=False, label='Наименование:')
-    name_new = forms.CharField(label='Добавить наименование:', required=False)
-    description = forms.CharField(widget=forms.Textarea(attrs={"cols": "20", 'rows': "10"}), label='Комментарий:')
-    position = forms.ModelChoiceField(queryset=GP.objects.all(), label='Поз. по ГП')
-    location = forms.CharField(widget=forms.TextInput, max_length=50, required=False)
-    tag = forms.CharField(label='Тег', max_length=100)
-    status = forms.ModelChoiceField(label='Статус:', queryset=StatusAdd.objects.all(), required=False)
-    status_new = forms.CharField(label='Добавить статус', max_length=10, required=False)
-    year = forms.ModelChoiceField(label='Год выпуска:', queryset=Year.objects.all(), required=False)
+    serial_number = forms.CharField(label='Серийный номер', max_length=100,
+                                    widget=forms.TextInput(attrs={'class': 'type'}))
+    model = forms.ModelChoiceField(widget=forms.Select(attrs={'class': 'select'}),
+                                   queryset=EquipmentModel.objects.all(),
+                                   label='Модель')
+    model_new = forms.CharField(label='Добавить модель:', widget=forms.TextInput(attrs={'class': 'type'}),
+                                required=False)
+    type = forms.ModelChoiceField(widget=forms.Select(attrs={'class': 'select'}), label='Тип оборудования:',
+                                  queryset=EquipmentType.objects.all(), required=False)
+    type_new = forms.CharField(label='Добавить тип:', max_length=15, widget=forms.TextInput(attrs={'class': 'type'}),
+                               required=False)
+    manufacturer = forms.ModelChoiceField(widget=forms.Select(attrs={'class': 'select'}), label='Производитель:',
+                                          queryset=Manufacturer.objects.all(), required=False)
+    manufacturer_new = forms.CharField(label='Добавить производителя:', widget=forms.TextInput(attrs={'class': 'type'}),
+                                       required=False)
+    name = forms.ModelChoiceField(widget=forms.Select(attrs={'class': 'select'}), queryset=EquipmentName.objects.all(),
+                                  required=False, label='Наименование:')
+    name_new = forms.CharField(label='Добавить наименование:', widget=forms.TextInput(attrs={'class': 'type'}),
+                               required=False)
+    description = forms.CharField(widget=forms.Textarea(attrs={"cols": "100", 'rows': "10"}), label='Комментарий:')
+    position = forms.ModelChoiceField(widget=forms.Select(attrs={'class': 'select'}), queryset=GP.objects.all(),
+                                      label='Поз. по ГП')
+    location = forms.CharField(widget=forms.TextInput(attrs={'class': 'type'}), max_length=50, required=False,
+                               label='Место установки:')
+    tag = forms.CharField(label='Тег', widget=forms.TextInput(attrs={'class': 'type'}), max_length=100)
+    status = forms.ModelChoiceField(widget=forms.Select(attrs={'class': 'select'}), queryset=StatusAdd.objects.all(),
+                                    label='Статус')
+    status_new = forms.CharField(label='Добавить статус', max_length=10,
+                                 widget=forms.TextInput(attrs={'class': 'type'}), required=False)
+    year = forms.ModelChoiceField(widget=forms.Select(attrs={'class': 'select'}), label='Год выпуска:',
+                                  queryset=Year.objects.all(), required=False)
 
     def clean(self):
         if Equipment.objects.filter(serial_number=self.cleaned_data['serial_number'],
@@ -109,41 +125,58 @@ class AddEquipmentForm(forms.Form):
         Location.objects.create(equipment=equipment, name=location)
         Position.objects.create(equipment=equipment, name=position)
         Description.objects.create(equipment=equipment, user=user, name=description)
+
         return self.cleaned_data
 
 
 class AddDeviceForm(forms.Form):
-    serial_number = forms.CharField(label='Серийный номер:', max_length=100)
-    model = forms.ModelChoiceField(label='Модель:', queryset=EquipmentModel.objects.all(), required=False)
-    model_new = forms.CharField(label='Добавить модель:', required=False)
-    type = forms.ModelChoiceField(label='Тип оборудования:', queryset=EquipmentType.objects.all(), required=False)
-    type_new = forms.CharField(label='Добавить тип:', max_length=15, required=False)
-    manufacturer = forms.ModelChoiceField(label='Производитель:', queryset=Manufacturer.objects.all(), required=False)
-    manufacturer_new = forms.CharField(label='Добавить производителя:', required=False)
-    name = forms.ModelChoiceField(queryset=EquipmentName.objects.all(), required=False, label='Наименование:')
-    name_new = forms.CharField(label='Добавить наименование:', required=False)
-    description = forms.CharField(widget=forms.Textarea(attrs={"cols": "20", 'rows': "10"}), label='Комментарий:')
-    position = forms.ModelChoiceField(queryset=GP.objects.all(), label='Поз. по ГП')
-    location = forms.CharField(label='Место установки:', max_length=20, required=False)
-    tag = forms.CharField(label='Тег', max_length=10, required=False)
-    status = forms.ModelChoiceField(label='Статус:', queryset=StatusAdd.objects.all(), required=False)
-    status_new = forms.CharField(label='Добавить статус', max_length=10, required=False)
-    year = forms.ModelChoiceField(label='Год выпуска:', queryset=Year.objects.all(), required=False)
-    # error = forms.ModelChoiceField(label='Погрешность:', queryset=Error.objects.all(), required=False)
-    # error_new = forms.CharField(label='Добавить погрешность:', required=False)
-    reg_number = forms.ModelChoiceField(label='Регистрационный номер:', queryset=RegNumber.objects.all(),
+    serial_number = forms.CharField(label='Серийный номер', max_length=100,
+                                    widget=forms.TextInput(attrs={'class': 'type'}))
+    model = forms.ModelChoiceField(widget=forms.Select(attrs={'class': 'select'}),
+                                   queryset=EquipmentModel.objects.all(),
+                                   label='Модель')
+    model_new = forms.CharField(label='Добавить модель:', widget=forms.TextInput(attrs={'class': 'type'}),
+                                required=False)
+    type = forms.ModelChoiceField(widget=forms.Select(attrs={'class': 'select'}), label='Тип оборудования:',
+                                  queryset=EquipmentType.objects.all(), required=False)
+    type_new = forms.CharField(label='Добавить тип:', max_length=15, widget=forms.TextInput(attrs={'class': 'type'}),
+                               required=False)
+    manufacturer = forms.ModelChoiceField(widget=forms.Select(attrs={'class': 'select'}), label='Производитель:',
+                                          queryset=Manufacturer.objects.all(), required=False)
+    manufacturer_new = forms.CharField(label='Добавить производителя:', widget=forms.TextInput(attrs={'class': 'type'}),
+                                       required=False)
+    name = forms.ModelChoiceField(widget=forms.Select(attrs={'class': 'select'}), queryset=EquipmentName.objects.all(),
+                                  required=False, label='Наименование:')
+    name_new = forms.CharField(label='Добавить наименование:', widget=forms.TextInput(attrs={'class': 'type'}),
+                               required=False)
+    description = forms.CharField(widget=forms.Textarea(attrs={"cols": "100", 'rows': "10"}), label='Комментарий:')
+    position = forms.ModelChoiceField(widget=forms.Select(attrs={'class': 'select'}), queryset=GP.objects.all(),
+                                      label='Поз. по ГП')
+    location = forms.CharField(widget=forms.TextInput(attrs={'class': 'type'}), max_length=50, required=False,
+                               label='Место установки:')
+    tag = forms.CharField(label='Тег', widget=forms.TextInput(attrs={'class': 'type'}), max_length=100)
+    status = forms.ModelChoiceField(widget=forms.Select(attrs={'class': 'select'}), queryset=StatusAdd.objects.all(),
+                                    label='Статус')
+    status_new = forms.CharField(label='Добавить статус', max_length=10,
+                                 widget=forms.TextInput(attrs={'class': 'type'}), required=False)
+    year = forms.ModelChoiceField(widget=forms.Select(attrs={'class': 'select'}), label='Год выпуска:',
+                                  queryset=Year.objects.all(), required=False)
+    reg_number = forms.ModelChoiceField(widget=forms.Select(attrs={'class': 'select'}),label='Регистрационный номер:', queryset=RegNumber.objects.all(),
                                         required=False)
-    reg_number_new = forms.CharField(label='Добавить регистрационный номер:', max_length=20, required=False)
+    reg_number_new = forms.CharField(widget=forms.TextInput(attrs={'class': 'type'}),label='Добавить регистрационный номер:', max_length=20, required=False)
     previous_verification = forms.DateField(label='Дата предыдущей поверки:', widget=forms.TextInput(attrs=
     {
         'type': 'date',
         'value': datetime.date.today().strftime('%Y-%m-%d'),
+        'class': 'type',
     }))
-    certificate = forms.CharField(widget=forms.TextInput(attrs={"size": "50"}), label='Сертификат:')
-    interval = forms.ChoiceField(label='Межповерочный интервал:', choices=CHOICES_INTERVAL)
-    min_scale = forms.DecimalField(label='Мин. шкалы:')
-    max_scale = forms.DecimalField(label='Макс. шкалы:')
-    unit = forms.ChoiceField(label='Единицы измерения:', choices=CHOICES_UNIT)
+    certificate = forms.CharField(widget=forms.TextInput(attrs={"class": "type"}), label='Сертификат:')
+    interval = forms.ChoiceField(widget=forms.Select(attrs={'class': 'select'}), label='Межповерочный интервал:',
+                                 choices=CHOICES_INTERVAL)
+    min_scale = forms.DecimalField(widget=forms.TextInput(attrs={"class": "type"}), label='Мин. шкалы:')
+    max_scale = forms.DecimalField(widget=forms.TextInput(attrs={"class": "type"}), label='Макс. шкалы:')
+    unit = forms.ChoiceField(widget=forms.Select(attrs={'class': 'select'}),
+                             label='Единицы измерения:', choices=CHOICES_UNIT)
 
     def clean(self):
         if Equipment.objects.filter(serial_number=self.cleaned_data['serial_number'],
@@ -250,6 +283,10 @@ class DraftForm(forms.ModelForm):
     class Meta(object):
         model = Draft
         exclude = ('user_draft',)
+
+        widgets = {
+            'description_draft': Textarea(attrs={'rows': '4', 'cols': '80'}),
+        }
 
 
 class DraftFormDevice(forms.Form):

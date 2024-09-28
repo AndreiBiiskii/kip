@@ -9,7 +9,7 @@
         <h2>{{ equipment.serial_number }} / {{ equipment.name }} / {{ equipment.type }} / {{ equipment.model}}</h2>
     </cite>
 </div>
-<br><br>
+<div>
 <table>
     <thead class="td_position">
     <tr>
@@ -54,7 +54,7 @@
     {%endfor%}
     </tbody>
 </table>
-
+</div>
 
 {% if equipment.si_or %}
 <a href="{% url 'device_update' equipment.pk %}" class="button-style2">Изменить</a>

@@ -2,36 +2,17 @@
 
 {% block content %}
 <hr>
-<div>
-    <!--    <form action="{% url 'search' %}" method="POST">-->
-    <!--        {% csrf_token %}-->
-    <!--        <input type="text" name="serial_number" placeholder="Серийный номер">-->
-    <!--        <button type="submit">Поиск</button>-->
-
-    <!--        <div {%if not user.is_staff%}class="owner" {%endif%}>-->
-    <!--            Фильтр:<br>-->
-    <!--            СИ:<input type="checkbox" name="si"><br>-->
-    <!--            Тэг<input type="text" name="tag"><br>-->
-
-    <!--&lt;!&ndash;            <form action="" method="POST" enctype="multipart/form-data">&ndash;&gt;-->
-    <!--&lt;!&ndash;                {% csrf_token %}&ndash;&gt;-->
-    <!--&lt;!&ndash;                {{ formfilter.as_p }}&ndash;&gt;-->
-    <!--&lt;!&ndash;                <button type="submit"> save</button>&ndash;&gt;-->
-    <!--&lt;!&ndash;            </form>&ndash;&gt;-->
 
 
-    <!--            Дата следующей поверки:<input type="date" name="date_next">-->
-    <!--        </div>-->
+        <form action="{% url 'search' %}" method="POST">
+            {% csrf_token %}
+            {{ equipments.form.as_p }}
+            <button type="submit" class="search_btn">Search</button>
+            <cite>Найдено:{{count}}</cite>
+        </form>
 
-    <!--    </form>-->
 
-    <form action="{% url 'search' %}" method="POST">
-        {% csrf_token %}
-        {{ equipments.form.as_p }}
-        <button type="submit">Search</button> <cite>Найдено:{{count}}</cite>
-    </form>
 
-</div>
 <h1 class="error">{{error}}</h1>
 <a href="{% url 'draft' %}">Добавить информацию</a>
 <table>

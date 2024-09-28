@@ -5,7 +5,11 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ title }}</title>
+    {%if 'Android' or 'ios' in request.headers.user_agent%}
+    <link rel="stylesheet" type="text/css" href="{% static 'device/css/style_phone.css' %}">
+    {%else%}
     <link rel="stylesheet" type="text/css" href="{% static 'device/css/style.css' %}">
+    {%endif%}
 </head>
 <body>
 <div class="shadowbox">
@@ -26,13 +30,13 @@
         {% if i.title == "Поиск" %}
         <hr>
         {%endif%}
-        <li><a href="{% url i.url_name %}">{{i.title}}</a></li>
+        <li><a class="type" href="{% url i.url_name %}">{{i.title}}</a></li>
         {% endfor %}
         <hr>
-        <li><a href="{%url 'draft_list'%}">Черновик</a></li>
+        <li><a class="type" href="{%url 'draft_list'%}">Черновик</a></li>
         <hr>
-        <li><a href="{% url 'equipment_add' %}">Добавить оборудование</a></li>
-        <li><a href="{% url 'device_add' %}">Добавить прибор</a></li>
+        <li><a class="type"  href="{% url 'equipment_add' %}">Добавить оборудование</a></li>
+        <li><a class="type" href="{% url 'device_add' %}">Добавить прибор</a></li>
     </ul>
 </div>
 

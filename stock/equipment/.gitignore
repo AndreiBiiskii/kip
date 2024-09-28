@@ -18,3 +18,7 @@ settings_local.py
 
 ### OS specific ###
 .DS_Store
+migrations/
+bag.csv
+SIdks.csv
+SIkgs.csv

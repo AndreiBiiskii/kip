@@ -60,6 +60,7 @@ class EquipmentType(models.Model):
 
     class Meta:
         verbose_name_plural = 'Типы оборудования'
+        ordering = ('name',)
 
 
 class EquipmentModel(models.Model):
@@ -70,6 +71,7 @@ class EquipmentModel(models.Model):
 
     class Meta:
         verbose_name_plural = 'Модели оборудования'
+        ordering = ('name',)
 
 
 class EquipmentName(models.Model):
@@ -205,7 +207,7 @@ class Draft(models.Model):
 
 
 class GP(models.Model):
-    name = models.CharField(max_length=100, blank=False, verbose_name='Позиция по ГП')
+    name = models.CharField(max_length=100, blank=False, verbose_name='Позиция по ГП', unique=True)
     construction = models.CharField(max_length=100, blank=True, verbose_name='Наименование здания, сооружения')
 
     def __str__(self):
